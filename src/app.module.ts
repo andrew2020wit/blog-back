@@ -3,7 +3,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { Connection } from 'typeorm';
-import { UsersModule } from './api/entities/users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { UsersModule } from './api/entities/users/users.module';
     }),
 
     TypeOrmModule.forRoot(),
-    UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {
