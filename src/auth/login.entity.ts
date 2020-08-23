@@ -11,9 +11,9 @@ export class LoginObject {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: 'user' })
   role: string;
 
-  @Column()
-  isBanned: boolean;
+  @Column({ default: true })
+  isActive: boolean;
 }
