@@ -15,5 +15,17 @@
         "titleBar.inactiveBackground": "#11000099",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#110000"
+    "peacock.color": "#110000",
+    "sqltools.connections": [
+        {
+            "askForPassword": true,
+            "database": "blog-back",
+            "driver": "PostgreSQL",
+            "name": "blog-back",
+            "port": 5432,
+            "previewLimit": 50,
+            "server": "localhost",
+            "username": "nest"
+        }
+    ]
 }
