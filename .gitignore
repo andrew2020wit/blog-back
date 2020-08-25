@@ -32,3 +32,10 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# dotenv environment variables file
+.env
+.env.test
+
+# Folder config file
+[Dd]esktop.ini
