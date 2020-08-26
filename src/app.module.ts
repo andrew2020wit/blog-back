@@ -14,7 +14,6 @@ import { AuthModule } from './auth/auth.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
     }),
-
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({

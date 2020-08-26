@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class UserEntity {
@@ -22,4 +29,12 @@ export class UserEntity {
 
   @Column({ type: 'boolean', nullable: false, default: true })
   isActive: boolean;
+
+  @CreateDateColumn() createdOn?: Date;
+  @CreateDateColumn() updatedOn?: Date;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 }
