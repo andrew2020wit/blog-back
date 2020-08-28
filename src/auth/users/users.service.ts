@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { toUserDto } from 'src/shared/mappers/to-user.dto';
+import { toReturnUserDto } from 'src/auth/mappers/to-user.dto';
 import { comparePasswords } from 'src/shared/utils';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { UserDto } from './dto/user.dto';
+import { ReturnUserDto } from './dto/return-user.dto';
 import { UserEntity } from './user.entity';
 
 @Injectable()
@@ -15,12 +15,12 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async findOne(options?: object): Promise<UserDto> {
+  async findOne(options?: object): Promise<ReturnUserDto> {
     const user = await this.userRepository.findOne(options);
-    return toUserDto(user);
+    return toReturnUserDto(user);
   }
 
-  async findByLogin({ login, password }: LoginUserDto): Promise<UserDto> {
+  async findByLogin({ login, password }: LoginUserDto): Promise<ReturnUserDto> {
     const user = await this.userRepository.findOne({ where: { login } });
 
     if (!user) {
@@ -34,14 +34,14 @@ export class UsersService {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    return toUserDto(user);
+    return toReturnUserDto(user);
   }
 
-  async findByPayload({ login }: any): Promise<UserDto> {
+  async findByPayload({ login }: any): Promise<ReturnUserDto> {
     return await this.findOne({ where: { login } });
   }
 
-  async create(userDto: CreateUserDto): Promise<UserDto> {
+  async create(userDto: CreateUserDto): Promise<ReturnUserDto> {
     const { login, password } = userDto;
 
     // check if the user exists in the db
@@ -57,7 +57,7 @@ export class UsersService {
 
     await this.userRepository.save(user);
 
-    return toUserDto(user);
+    return toReturnUserDto(user);
   }
 
   private _sanitizeUser(user: UserEntity) {

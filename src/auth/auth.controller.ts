@@ -9,14 +9,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { JwtPayload } from 'src/interfaces/JwtPayload';
-import { LoginStatus } from 'src/interfaces/LoginStatus';
-import { RegistrationStatus } from 'src/interfaces/RegistrationStatus';
-import { LoginUserDto } from 'src/users/dto/login-user.dto';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { LoginStatus } from 'src/auth/interfaces/LoginStatus';
+import { RegistrationStatus } from 'src/auth/interfaces/RegistrationStatus';
+import { IJwtPayload } from 'src/auth/strategies/jwt/i-jwt-payload.interface';
+import { LoginUserDto } from 'src/auth/users/dto/login-user.dto';
 import { AuthService } from './auth.service';
+import { CreateUserDto } from './users/dto/create-user.dto';
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -42,7 +42,7 @@ export class AuthController {
 
   @Get('whoami')
   @UseGuards(AuthGuard())
-  public async testAuth(@Req() req: any): Promise<JwtPayload> {
+  public async testAuth(@Req() req: any): Promise<IJwtPayload> {
     return req.user;
   }
 }

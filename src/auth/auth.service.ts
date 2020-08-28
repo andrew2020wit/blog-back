@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from 'src/interfaces/JwtPayload';
-import { LoginStatus } from 'src/interfaces/LoginStatus';
-import { RegistrationStatus } from 'src/interfaces/RegistrationStatus';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { LoginUserDto } from 'src/users/dto/login-user.dto';
-import { UserDto } from 'src/users/dto/user.dto';
-import { UsersService } from '../users/users.service';
+import { LoginStatus } from 'src/auth/interfaces/LoginStatus';
+import { RegistrationStatus } from 'src/auth/interfaces/RegistrationStatus';
+import { IJwtPayload } from 'src/auth/strategies/jwt/i-jwt-payload.interface';
+import { CreateUserDto } from 'src/auth/users/dto/create-user.dto';
+import { LoginUserDto } from 'src/auth/users/dto/login-user.dto';
+import { ReturnUserDto } from 'src/auth/users/dto/return-user.dto';
+import { UsersService } from './users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -15,14 +15,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(userDto: CreateUserDto): Promise<RegistrationStatus> {
+  async register(createUserDto: CreateUserDto): Promise<RegistrationStatus> {
     let status: RegistrationStatus = {
       success: true,
       message: 'user registered',
     };
 
     try {
-      await this.usersService.create(userDto);
+      await this.usersService.create(createUserDto);
     } catch (err) {
       status = {
         success: false,
@@ -41,12 +41,12 @@ export class AuthService {
     const token = this._createToken(user);
 
     return {
-      login: user.login,
+      id: user.id,
       ...token,
     };
   }
 
-  async validateUser(payload: JwtPayload): Promise<UserDto> {
+  async validateUser(payload: IJwtPayload): Promise<ReturnUserDto> {
     const user = await this.usersService.findByPayload(payload);
     if (!user) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
@@ -54,10 +54,10 @@ export class AuthService {
     return user;
   }
 
-  private _createToken({ login }: UserDto): any {
+  private _createToken({ id }: ReturnUserDto): any {
     const expiresIn = process.env.JWT_EXPIRESIN;
 
-    const user: JwtPayload = { login };
+    const user: IJwtPayload = { id };
     const accessToken = this.jwtService.sign(user);
     return {
       expiresIn,
