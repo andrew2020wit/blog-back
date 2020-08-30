@@ -1,8 +1,7 @@
-import { ReturnUserDto } from 'src/auth/users/dto/return-user.dto';
-import { UserEntity } from 'src/auth/users/user.entity';
+// import { UserEntity } from 'src/auth/users/user.entity';
 
-export const toReturnUserDto = (data: UserEntity): ReturnUserDto => {
-  const { id } = data;
-  const userDto: ReturnUserDto = { id };
-  return userDto;
-};
+// export const toReturnUserDto = (data: UserEntity): JwtUserDto => {
+//   const { id } = data;
+//   const userDto: JwtUserDto = { id };
+//   return userDto;
+// };

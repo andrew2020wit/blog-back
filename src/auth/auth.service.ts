@@ -1,11 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginStatus } from 'src/auth/interfaces/LoginStatus';
-import { RegistrationStatus } from 'src/auth/interfaces/RegistrationStatus';
-import { IJwtPayload } from 'src/auth/strategies/jwt/i-jwt-payload.interface';
-import { CreateUserDto } from 'src/auth/users/dto/create-user.dto';
-import { LoginUserDto } from 'src/auth/users/dto/login-user.dto';
-import { ReturnUserDto } from 'src/auth/users/dto/return-user.dto';
+import { CreateUserDto } from 'src/auth/dto/create-user.dto';
+import { StatusMessageDto } from 'src/shared/status-message.dto';
+import { comparePasswords } from 'src/shared/utils';
+import { JwtUserDto } from './dto/jwt-user.dto';
+import { JWTokenDTO } from './dto/token-object.dto';
 import { UsersService } from './users/users.service';
 
 @Injectable()
@@ -15,53 +14,37 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(createUserDto: CreateUserDto): Promise<RegistrationStatus> {
-    let status: RegistrationStatus = {
-      success: true,
-      message: 'user registered',
-    };
-
-    try {
-      await this.usersService.create(createUserDto);
-    } catch (err) {
-      status = {
-        success: false,
-        message: err,
-      };
+  async validateUserForJWT(
+    login: string,
+    password1: string,
+  ): Promise<JwtUserDto | null> {
+    const user = await this.usersService.findByLogin(login);
+    if (!user) {
+      return null;
     }
-
-    return status;
-  }
-
-  async login(loginUserDto: LoginUserDto): Promise<LoginStatus> {
-    // find user in db
-    const user = await this.usersService.findByLogin(loginUserDto);
-
-    // generate and sign token
-    const token = this._createToken(user);
-
+    const areEqual = await comparePasswords(user.password, password1);
+    if (!areEqual) {
+      return null;
+    }
     return {
       id: user.id,
-      ...token,
+      login: user.login,
+      fullName: user.fullName,
+      role: user.role,
     };
   }
 
-  async validateUser(payload: IJwtPayload): Promise<ReturnUserDto> {
-    const user = await this.usersService.findByPayload(payload);
-    if (!user) {
-      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-    }
-    return user;
+  async createUser(createUserDto: CreateUserDto): Promise<StatusMessageDto> {
+    return await this.usersService.createUser(createUserDto);
   }
 
-  private _createToken({ id }: ReturnUserDto): any {
-    const expiresIn = process.env.JWT_EXPIRESIN;
-
-    const user: IJwtPayload = { id };
-    const accessToken = this.jwtService.sign(user);
-    return {
-      expiresIn,
-      accessToken,
+  async getAccessTokenObject(jwtUserDto: JwtUserDto): Promise<JWTokenDTO> {
+    return await {
+      token: this.jwtService.sign({
+        login: jwtUserDto.login,
+        sub: jwtUserDto.id,
+      }),
+      ...jwtUserDto,
     };
   }
 }

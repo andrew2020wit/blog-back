@@ -21,6 +21,13 @@ export class UserEntity {
   @Column({
     type: 'varchar',
     nullable: false,
+    unique: true,
+  })
+  fullName: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: false,
   })
   password: string;
 
@@ -34,7 +41,7 @@ export class UserEntity {
   @CreateDateColumn() updatedOn?: Date;
 
   @BeforeInsert()
-  async hashPassword() {
+  async hashPassword(): Promise<void> {
     this.password = await bcrypt.hash(this.password, 10);
   }
 }

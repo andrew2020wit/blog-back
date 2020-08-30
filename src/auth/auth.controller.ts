@@ -2,47 +2,45 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Post,
-  Req,
+  Request,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { LoginStatus } from 'src/auth/interfaces/LoginStatus';
-import { RegistrationStatus } from 'src/auth/interfaces/RegistrationStatus';
-import { IJwtPayload } from 'src/auth/strategies/jwt/i-jwt-payload.interface';
-import { LoginUserDto } from 'src/auth/users/dto/login-user.dto';
+import { StatusMessageDto } from 'src/shared/status-message.dto';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from './users/dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { JwtUserDto } from './dto/jwt-user.dto';
+import { JWTokenDTO } from './dto/token-object.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { RequestWithJwtUserDto } from './interfaces/request-with-user.interface';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
-  public async register(
+  @Post('create-user')
+  async register(
     @Body() createUserDto: CreateUserDto,
-  ): Promise<RegistrationStatus> {
-    const result: RegistrationStatus = await this.authService.register(
-      createUserDto,
-    );
-
-    if (!result.success) {
-      throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
-    }
-
-    return result;
+  ): Promise<StatusMessageDto> {
+    return await this.authService.createUser(createUserDto);
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  public async login(@Body() loginUserDto: LoginUserDto): Promise<LoginStatus> {
-    return await this.authService.login(loginUserDto);
+  async login(@Request() req: RequestWithJwtUserDto): Promise<JWTokenDTO> {
+    return this.authService.getAccessTokenObject(req.user);
   }
 
-  @Get('whoami')
-  @UseGuards(AuthGuard())
-  public async testAuth(@Req() req: any): Promise<IJwtPayload> {
-    return req.user;
+  @UseGuards(JwtAuthGuard)
+  @Get('user-profile')
+  async getProfile(@Request() req: RequestWithJwtUserDto): Promise<JwtUserDto> {
+    return await req.user;
   }
+
+  // @Get('whoami')
+  // @UseGuards(AuthGuard())
+  // public async testAuth(@Req() req: any): Promise<IJwtPayload> {
+  //   return req.user;
+  // }
 }
