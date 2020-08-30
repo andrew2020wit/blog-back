@@ -38,7 +38,7 @@ export class AuthService {
     return await this.usersService.createUser(createUserDto);
   }
 
-  async getAccessTokenObject(jwtUserDto: JwtUserDto): Promise<JWTokenDTO> {
+  async getTokenObject(jwtUserDto: JwtUserDto): Promise<JWTokenDTO> {
     return await {
       token: this.jwtService.sign({
         login: jwtUserDto.login,

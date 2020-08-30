@@ -23,13 +23,14 @@ export class AuthController {
   async register(
     @Body() createUserDto: CreateUserDto,
   ): Promise<StatusMessageDto> {
+    // console.log(await bcrypt.hash('12', 10));
     return await this.authService.createUser(createUserDto);
   }
 
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post('get-token-obj')
   async login(@Request() req: RequestWithJwtUserDto): Promise<JWTokenDTO> {
-    return this.authService.getAccessTokenObject(req.user);
+    return this.authService.getTokenObject(req.user);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -1,6 +1,4 @@
-import * as bcrypt from 'bcrypt';
 import {
-  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -40,8 +38,9 @@ export class UserEntity {
   @CreateDateColumn() createdOn?: Date;
   @CreateDateColumn() updatedOn?: Date;
 
-  @BeforeInsert()
-  async hashPassword(): Promise<void> {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
+  // @BeforeInsert()
+  // async hashPassword(): Promise<void> {
+  //   //this.password = await (this.password + 'dfsdfgsdgf');
+  //   this.password = await bcrypt.hash(this.password, 10);
+  // }
 }
