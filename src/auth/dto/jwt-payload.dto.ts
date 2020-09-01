@@ -1,4 +1,4 @@
-export class JwtUserDto {
+export class JwtPayloadDto {
   id: string;
   role: string;
   login: string;

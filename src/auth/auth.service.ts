@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
 import { StatusMessageDto } from 'src/shared/status-message.dto';
-import { comparePasswords } from 'src/shared/utils';
-import { JwtUserDto } from './dto/jwt-user.dto';
+import { JwtPayloadDto } from './dto/jwt-payload.dto';
 import { JWTokenDTO } from './dto/token-object.dto';
 import { UsersService } from './users/users.service';
 
@@ -17,13 +17,15 @@ export class AuthService {
   async validateUserForJWT(
     login: string,
     password1: string,
-  ): Promise<JwtUserDto | null> {
+  ): Promise<JwtPayloadDto | null> {
     const user = await this.usersService.findByLogin(login);
     if (!user) {
       return null;
     }
-    const areEqual = await comparePasswords(user.password, password1);
+    const areEqual = await bcrypt.compare(password1, user.password);
+
     if (!areEqual) {
+      console.log('bcrypt.compare(password1, user.password);');
       return null;
     }
     return {
@@ -38,13 +40,14 @@ export class AuthService {
     return await this.usersService.createUser(createUserDto);
   }
 
-  async getTokenObject(jwtUserDto: JwtUserDto): Promise<JWTokenDTO> {
+  async getTokenObject(jwtPayloadDto: JwtPayloadDto): Promise<JWTokenDTO> {
     return await {
-      token: this.jwtService.sign({
-        login: jwtUserDto.login,
-        sub: jwtUserDto.id,
+      access_token: this.jwtService.sign({
+        login: jwtPayloadDto.login,
+        sub: jwtPayloadDto.id,
+        role: jwtPayloadDto.role,
+        fullName: jwtPayloadDto.fullName,
       }),
-      ...jwtUserDto,
     };
   }
 }

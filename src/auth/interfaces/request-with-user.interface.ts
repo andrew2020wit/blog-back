@@ -1,5 +1,5 @@
-import { JwtUserDto } from '../dto/jwt-user.dto';
+import { JwtPayloadDto } from '../dto/jwt-payload.dto';
 
 export interface RequestWithJwtUserDto extends Request {
-  user?: JwtUserDto;
+  user?: JwtPayloadDto;
 }
