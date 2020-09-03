@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { StatusMessageDto } from 'src/shared/status-message.dto';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { UserAdminView } from '../dto/user-admin-view.dto';
 import { UserEntity } from './user.entity';
 
 @Injectable()
@@ -15,6 +16,20 @@ export class UsersService {
 
   async findByLogin(login: string): Promise<UserEntity | undefined> {
     return await this.userRepository.findOne({ where: { login } });
+  }
+
+  async findAllUsersWithOutPW(): Promise<UserAdminView[] | undefined> {
+    return await this.userRepository.find({
+      select: [
+        'login',
+        'createdOn',
+        'fullName',
+        'id',
+        'isActive',
+        'role',
+        'updatedOn',
+      ],
+    });
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<StatusMessageDto> {

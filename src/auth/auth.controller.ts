@@ -37,6 +37,7 @@ export class AuthController {
   async getProfile(
     @Request() req: RequestWithJwtUserDto,
   ): Promise<JwtPayloadDto> {
+    console.log('user-profile');
     return await req.user;
   }
 }
