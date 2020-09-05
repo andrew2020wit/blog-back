@@ -10,7 +10,9 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+  });
 
   // app.setGlobalPrefix('api');
   await app.listen(PORT);

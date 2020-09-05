@@ -18,6 +18,10 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { login } });
   }
 
+  async findById(userId: string): Promise<UserEntity | undefined> {
+    return await this.userRepository.findOne({ where: { id: userId } });
+  }
+
   async findAllUsersWithOutPW(): Promise<UserAdminView[] | undefined> {
     return await this.userRepository.find({
       select: [
@@ -68,6 +72,32 @@ export class UsersService {
     return {
       message: `user ${createUserDto.login} created`,
       source: 'createUser',
+      ok: true,
+    };
+  }
+
+  async editUser(
+    userId: string,
+    userEditDto: CreateUserDto,
+  ): Promise<StatusMessageDto> {
+    if (!this.findById(userId)) {
+      return {
+        message: `not find user by userId ${userId}`,
+        source: 'editUser',
+        ok: false,
+      };
+    }
+    const password2 = await bcrypt.hash(userEditDto.password, 10);
+    await this.userRepository.save({
+      id: userId,
+      login: userEditDto.login,
+      fullName: userEditDto.fullName,
+      password: password2,
+    });
+
+    return {
+      message: `user ${userEditDto.login} save`,
+      source: 'editUser',
       ok: true,
     };
   }

@@ -40,6 +40,13 @@ export class AuthService {
     return await this.usersService.createUser(createUserDto);
   }
 
+  async editUser(
+    userId: string,
+    createUserDto: CreateUserDto,
+  ): Promise<StatusMessageDto> {
+    return await this.usersService.editUser(userId, createUserDto);
+  }
+
   async getTokenObject(jwtPayloadDto: JwtPayloadDto): Promise<JWTokenDTO> {
     return await {
       access_token: this.jwtService.sign({

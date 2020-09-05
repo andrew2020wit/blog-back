@@ -1,8 +1,10 @@
+import { Length } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -13,17 +15,20 @@ export class UserEntity {
     nullable: false,
     unique: true,
   })
+  @Length(3, 32)
   login: string;
 
   @Column({
     nullable: false,
     unique: true,
   })
+  @Length(3, 64)
   fullName: string;
 
   @Column({
     nullable: false,
   })
+  @Length(2, 32)
   password: string;
 
   @Column({ nullable: false, default: 'user' })
@@ -33,11 +38,5 @@ export class UserEntity {
   isActive: boolean;
 
   @CreateDateColumn() createdOn?: Date;
-  @CreateDateColumn() updatedOn?: Date;
-
-  // @BeforeInsert()
-  // async hashPassword(): Promise<void> {
-  //   //this.password = await (this.password + 'dfsdfgsdgf');
-  //   this.password = await bcrypt.hash(this.password, 10);
-  // }
+  @UpdateDateColumn() updatedOn?: Date;
 }
