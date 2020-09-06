@@ -12,7 +12,7 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     PassportModule.register({
-      defaultStrategy: 'jwt',
+      // defaultStrategy: 'jwt',
       property: 'user',
       session: false,
     }),
