@@ -5,6 +5,8 @@ import { join } from 'path';
 import { Connection } from 'typeorm';
 import { ArticlesModule } from './articles/articles.module';
 import { AuthModule } from './auth/auth.module';
+import { InitTestDataController } from './testing/init-test-data/init-test-data.controller';
+import { InitTestDataService } from './testing/init-test-data/init-test-data.service';
 
 @Module({
   imports: [
@@ -25,7 +27,8 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     ArticlesModule,
   ],
-  controllers: [],
+  providers: [InitTestDataService],
+  controllers: [InitTestDataController],
 })
 export class AppModule {
   constructor(private connection: Connection) {}

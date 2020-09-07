@@ -3,3 +3,10 @@ export class StatusMessageDto {
   source: string;
   ok: boolean;
 }
+
+/*
+
+{ message: '',
+  source: '',
+  ok: true }
+*/

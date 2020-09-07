@@ -31,7 +31,7 @@ export class AuthAdminController {
         .createQueryBuilder()
         .update(UserEntity)
         .set({ isActive: body.isActive })
-        .where('id = :id', { id: body.userId })
+        .where('id = :id and role != :role', { id: body.userId, role: 'admin' })
         .execute();
       return { message: body.userId, source: 'activateUser', ok: true };
     } catch {
