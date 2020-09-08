@@ -15,7 +15,6 @@ export class InitTestDataService {
   }
   async usersGenerator(quantity: number): Promise<void> {
     for (let n = 1; n <= quantity; n++) {
-      // const login = 'user' + n.toString;
       await this.authService.createUser({
         login: 'user' + n,
         fullName: 'User N' + n,

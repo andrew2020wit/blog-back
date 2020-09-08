@@ -18,10 +18,10 @@
     "peacock.color": "#110000",
     "sqltools.connections": [
         {
-            "askForPassword": true,
             "database": "blog-back",
             "driver": "PostgreSQL",
             "name": "blog-back",
+            "password": "777",
             "port": 5432,
             "previewLimit": 50,
             "server": "localhost",

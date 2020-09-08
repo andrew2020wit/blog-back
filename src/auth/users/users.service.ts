@@ -87,13 +87,22 @@ export class UsersService {
         ok: false,
       };
     }
+
     const password2 = await bcrypt.hash(userEditDto.password, 10);
-    await this.userRepository.save({
-      id: userId,
-      login: userEditDto.login,
-      fullName: userEditDto.fullName,
-      password: password2,
-    });
+    try {
+      await this.userRepository.save({
+        id: userId,
+        login: userEditDto.login,
+        fullName: userEditDto.fullName,
+        password: password2,
+      });
+    } catch (err) {
+      return {
+        message: err,
+        source: 'editUser',
+        ok: false,
+      };
+    }
 
     return {
       message: `user ${userEditDto.login} save`,
