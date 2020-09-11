@@ -27,6 +27,7 @@ export class UserEntity {
 
   @Column({
     nullable: false,
+    select: false,
   })
   @Length(2, 32)
   password: string;
@@ -40,3 +41,14 @@ export class UserEntity {
   @CreateDateColumn() createdOn?: Date;
   @UpdateDateColumn() updatedOn?: Date;
 }
+
+export const selectAllUserEntity = [
+  'id',
+  'login',
+  'fullName',
+  'password',
+  'role',
+  'isActive',
+  'createdOn',
+  'updatedOn',
+];

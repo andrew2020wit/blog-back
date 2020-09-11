@@ -3,19 +3,19 @@ import { CreateUserDto } from 'src/auth/dto/create-user.dto';
 import { UserEntity } from 'src/auth/users/user.entity';
 import { StatusMessageDto } from 'src/shared/status-message.dto';
 import { getConnection } from 'typeorm';
-import { AuthService } from './../../auth/auth.service';
+import { UsersService } from './../../auth/users/users.service';
 
 @Injectable()
 export class InitTestDataService {
   users: CreateUserDto[] = [];
-  constructor(private authService: AuthService) {}
+  constructor(private usersService: UsersService) {}
   initData(): StatusMessageDto {
     this.usersGenerator(200);
     return { message: 'done', source: 'initData', ok: true };
   }
   async usersGenerator(quantity: number): Promise<void> {
     for (let n = 1; n <= quantity; n++) {
-      await this.authService.createUser({
+      await this.usersService.createUser({
         login: 'user' + n,
         fullName: 'User N' + n,
         password: '12',
@@ -23,13 +23,13 @@ export class InitTestDataService {
     }
 
     // admin section
-    await this.authService.createUser({
+    await this.usersService.createUser({
       login: 'admin1',
       fullName: 'Admin N1 ',
       password: '12',
     });
 
-    await this.authService.createUser({
+    await this.usersService.createUser({
       login: 'admin2',
       fullName: 'Admin N2',
       password: '12',

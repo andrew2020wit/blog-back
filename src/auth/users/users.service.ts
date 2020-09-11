@@ -14,26 +14,16 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async findByLogin(login: string): Promise<UserEntity | undefined> {
+  private async findByLogin(login: string): Promise<UserEntity | undefined> {
     return await this.userRepository.findOne({ where: { login } });
   }
 
-  async findById(userId: string): Promise<UserEntity | undefined> {
+  private async findById(userId: string): Promise<UserEntity | undefined> {
     return await this.userRepository.findOne({ where: { id: userId } });
   }
 
-  async findAllUsersWithOutPW(): Promise<UserAdminView[] | undefined> {
-    return await this.userRepository.find({
-      select: [
-        'login',
-        'createdOn',
-        'fullName',
-        'id',
-        'isActive',
-        'role',
-        'updatedOn',
-      ],
-    });
+  async findAllUsers(): Promise<UserAdminView[] | undefined> {
+    return await this.userRepository.find();
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<StatusMessageDto> {

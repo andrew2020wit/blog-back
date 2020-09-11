@@ -5,6 +5,7 @@ import { join } from 'path';
 import { Connection } from 'typeorm';
 import { ArticlesModule } from './articles/articles.module';
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './auth/users/users.module';
 import { InitTestDataController } from './testing/init-test-data/init-test-data.controller';
 import { InitTestDataService } from './testing/init-test-data/init-test-data.service';
 
@@ -21,11 +22,13 @@ import { InitTestDataService } from './testing/init-test-data/init-test-data.ser
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      autoLoadEntities: true,
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     AuthModule,
     ArticlesModule,
+    UsersModule,
   ],
   providers: [InitTestDataService],
   controllers: [InitTestDataController],

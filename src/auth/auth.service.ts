@@ -1,24 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from 'src/auth/dto/create-user.dto';
-import { StatusMessageDto } from 'src/shared/status-message.dto';
+import { Repository } from 'typeorm';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
 import { JWTokenDTO } from './dto/token-object.dto';
-import { UsersService } from './users/users.service';
+import { UserEntity } from './users/user.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly jwtService: JwtService,
   ) {}
 
   async validateUserForJWT(
     login: string,
     password1: string,
-  ): Promise<JwtPayloadDto | null> {
-    const user = await this.usersService.findByLogin(login);
+  ): Promise<JwtPayloadDto> {
+    const user = await this.userRepository.findOne({
+      where: { login },
+      select: ['login', 'fullName', 'id', 'role', 'password'],
+    });
     if (!user) {
       return null;
     }
@@ -36,19 +40,8 @@ export class AuthService {
     };
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<StatusMessageDto> {
-    return await this.usersService.createUser(createUserDto);
-  }
-
-  async editUser(
-    userId: string,
-    createUserDto: CreateUserDto,
-  ): Promise<StatusMessageDto> {
-    return await this.usersService.editUser(userId, createUserDto);
-  }
-
   async getTokenObject(jwtPayloadDto: JwtPayloadDto): Promise<JWTokenDTO> {
-    return await {
+    return {
       access_token: this.jwtService.sign({
         login: jwtPayloadDto.login,
         sub: jwtPayloadDto.id,

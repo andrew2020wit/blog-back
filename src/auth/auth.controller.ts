@@ -7,16 +7,20 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RequestWithJwtUserExtDto } from './interfaces/request-with-user-ext.interface';
 import { RequestWithJwtUserDto } from './interfaces/request-with-user.interface';
+import { UsersService } from './users/users.service';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('create-user')
   async register(
     @Body() createUserDto: CreateUserDto,
   ): Promise<StatusMessageDto> {
-    return await this.authService.createUser(createUserDto);
+    return await this.usersService.createUser(createUserDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -25,8 +29,7 @@ export class AuthController {
     @Request() req: RequestWithJwtUserExtDto,
     @Body() createUserDto: CreateUserDto,
   ): Promise<StatusMessageDto> {
-    console.log(createUserDto);
-    return await this.authService.editUser(req.user.sub, createUserDto);
+    return await this.usersService.editUser(req.user.sub, createUserDto);
   }
 
   @UseGuards(LocalAuthGuard)
