@@ -29,6 +29,7 @@ import { InitTestDataService } from './testing/init-test-data/init-test-data.ser
     AuthModule,
     ArticlesModule,
     UsersModule,
+    ArticlesModule,
   ],
   providers: [InitTestDataService],
   controllers: [InitTestDataController],

@@ -1,8 +1,10 @@
 import { Length } from 'class-validator';
+import { ArticleEntity } from 'src/articles/article.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -40,6 +42,12 @@ export class UserEntity {
 
   @CreateDateColumn() createdOn?: Date;
   @UpdateDateColumn() updatedOn?: Date;
+
+  @OneToMany(
+    () => ArticleEntity,
+    article => article.author,
+  )
+  articles: ArticleEntity[];
 }
 
 export const selectAllUserEntity = [
