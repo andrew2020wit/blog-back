@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql/dist/graphql.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
@@ -8,12 +9,17 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './auth/users/users.module';
 import { InitTestDataController } from './testing/init-test-data/init-test-data.controller';
 import { InitTestDataService } from './testing/init-test-data/init-test-data.service';
+import { TestRunController } from './testing/test-run/test-run.controller';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot({
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
-      exclude: ['/api*'],
+      exclude: ['/api*', '/graphql*'],
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -32,7 +38,7 @@ import { InitTestDataService } from './testing/init-test-data/init-test-data.ser
     ArticlesModule,
   ],
   providers: [InitTestDataService],
-  controllers: [InitTestDataController],
+  controllers: [InitTestDataController, TestRunController],
 })
 export class AppModule {
   constructor(private connection: Connection) {}

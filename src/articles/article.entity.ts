@@ -1,3 +1,4 @@
+import { Field, ObjectType } from '@nestjs/graphql';
 import { UserEntity } from 'src/auth/users/user.entity';
 import {
   Column,
@@ -8,31 +9,49 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+@ObjectType()
 @Entity()
 export class ArticleEntity {
-  @PrimaryGeneratedColumn('uuid') id: string;
+  @Field()
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Field()
   @Column('varchar', { length: 128, nullable: false })
   title: string;
+
+  @Field()
   @Column('varchar', {
     length: 512,
     nullable: false,
     default: '',
   })
   description: string;
+
+  @Field()
   @Column({
     nullable: false,
     type: 'text',
   })
   text: string;
+
+  @Field()
   @Column({ type: 'boolean', nullable: false, default: true })
   isActive: boolean;
 
+  @Field(type => UserEntity)
   @ManyToOne(
     () => UserEntity,
     user => user.articles,
     { eager: true, cascade: false, nullable: false },
   )
   author: UserEntity;
-  @CreateDateColumn() createdOn: Date;
-  @UpdateDateColumn() updatedOn: Date;
+
+  @Field()
+  @CreateDateColumn()
+  createdOn: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedOn: Date;
 }
