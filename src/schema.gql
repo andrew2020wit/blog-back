@@ -13,6 +13,10 @@ type ArticleEntity {
   updatedOn: DateTime!
 }
 
+type articlesCount {
+  count: Int!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -20,7 +24,9 @@ scalar DateTime
 
 type Query {
   allArticles: [ArticleEntity!]!
+  articlesCount: articlesCount!
   author(id: String!): UserEntity!
+  usersCount: usersCount!
 }
 
 type UserEntity {
@@ -31,4 +37,8 @@ type UserEntity {
   isActive: Boolean!
   role: String!
   updatedOn: DateTime!
+}
+
+type usersCount {
+  count: Int!
 }

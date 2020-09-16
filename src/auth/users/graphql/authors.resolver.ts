@@ -1,9 +1,15 @@
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Field, Int, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../user.entity';
 
-@Resolver(of => UserEntity)
+@ObjectType()
+export class usersCount {
+  @Field(() => Int)
+  count: number;
+}
+
+@Resolver(() => UserEntity)
 export class AuthorsResolver {
   constructor(
     @InjectRepository(UserEntity)
@@ -21,10 +27,18 @@ export class AuthorsResolver {
     }
     return author;
   }
+}
 
-  // @ResolveField()
-  // async posts(@Parent() author: Author) {
-  //   const { id } = author;
-  //   return this.articlesService.findAll({ authorId: id });
-  // }
+@Resolver(() => usersCount)
+export class UsersCountResolver {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
+
+  @Query(() => usersCount)
+  async usersCount(): Promise<usersCount> {
+    const count = await this.userRepository.count();
+    return { count };
+  }
 }
