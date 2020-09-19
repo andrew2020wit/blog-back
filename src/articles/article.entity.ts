@@ -16,11 +16,11 @@ export class ArticleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  @Field({ description: `Article title` })
   @Column('varchar', { length: 128, nullable: false })
   title: string;
 
-  @Field()
+  @Field({ description: `Short article description` })
   @Column('varchar', {
     length: 512,
     nullable: false,
