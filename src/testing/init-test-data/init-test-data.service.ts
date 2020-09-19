@@ -34,7 +34,7 @@ export class InitTestDataService {
       for (let m = 1; m <= 4; m++) {
         const newArt = new ArticleEntity();
         newArt.author = author;
-        newArt.title = 'title N' + m;
+        newArt.title = 'title N' + m + ' from user: ' + author.fullName;
         newArt.description =
           'description N' +
           m +
