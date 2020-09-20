@@ -14,6 +14,7 @@ import { TestRunController } from './testing/test-run/test-run.controller';
 @Module({
   imports: [
     GraphQLModule.forRoot({
+      context: ({ req }) => ({ req }),
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
     }),

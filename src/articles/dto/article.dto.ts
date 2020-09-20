@@ -6,9 +6,16 @@ export class ArticleDTO {
   description: string;
   text: string;
 
-  author: UserEntity;
+  author?: UserEntity;
 
   isActive?: boolean;
   createdOn?: Date;
   updatedOn?: Date;
+}
+
+export class CreateArticleDTO {
+  title: string;
+  description: string;
+  text: string;
+  author?: UserEntity;
 }
