@@ -69,6 +69,6 @@ export class ArticlesResolver {
       { title: args.title, text: args.text, description: args.description },
       user.sub,
     );
-    return 'xss';
+    return 'createArticle: Ok';
   }
 }
