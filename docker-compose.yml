@@ -1,0 +1,10 @@
+version: '3.1'
+services:
+  postgres:
+    image: postgres:latest
+    restart: on-failure
+    environment:
+      - POSTGRES_DB=blog-back
+      - POSTGRES_PASSWORD=777
+    ports:
+      - 5432:5432

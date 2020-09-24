@@ -59,6 +59,13 @@ export class ArticlesResolver {
     });
   }
 
+  @Query(() => ArticleEntity)
+  async getArticle(
+    @Args('artId', { type: () => String }) artId: string,
+  ): Promise<ArticleEntity> {
+    return await this.articleRep.findOne(artId);
+  }
+
   @Mutation(returns => String)
   @UseGuards(GqlAuthGuard)
   async createArticle(

@@ -6,6 +6,7 @@ It is the learn project
 2. Authentication, JWT, Passport
 3. TypeORM, validation
 4. environment, dotenv
+5. GraphQL
 
 Front-project: https://github.com/andrew2020wit/blog-front
 
