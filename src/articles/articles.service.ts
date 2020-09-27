@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/auth/users/user.entity';
 import { StatusMessageDto } from 'src/shared/status-message.dto';
-import { getConnection } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 import { ArticleDTO } from './dto/article.dto';
 
 @Injectable()
 export class ArticlesService {
+  constructor(
+    @InjectRepository(ArticleEntity)
+    private readonly articleRep: Repository<ArticleEntity>,
+    @InjectRepository(UserEntity)
+    private readonly usersRep: Repository<UserEntity>,
+  ) {}
   async createArticle(
     newArtDto: ArticleDTO,
     userIdFromToken: string,
@@ -18,8 +25,8 @@ export class ArticlesService {
         ok: false,
       };
     }
+
     const connection = getConnection();
-    console.log('createArticle newArt', newArtDto);
     const newArt = new ArticleEntity();
     newArt.title = newArtDto.title;
     newArt.description = newArtDto.description;
@@ -43,15 +50,90 @@ export class ArticlesService {
       return { message: err.message, source: 'createArticle', ok: false };
     }
   }
-  //   async changeArticleHeader(ah: ArticleHeadDTO): Promise<StatusMessageDto> {
-  //     return { message: '', source: '', ok: true };
-  //   }
-  //   async changeArticleBody(ab: ArticleBodyDTO): Promise<StatusMessageDto> {
-  //     return { message: '', source: '', ok: true };
-  //   }
-  //   async deleteArticle(id: string): Promise<StatusMessageDto> {
-  //     return { message: '', source: '', ok: true };
-  //   }
-  //   async getArticleHead(id: string): Promise<ArticleHeadDTO> {}
-  //   async getArticleBody(id: string): Promise<ArticleBodyDTO> {}
+
+  async editArticle(
+    artDto: ArticleDTO,
+    userIdFromToken: string,
+  ): Promise<StatusMessageDto> {
+    const oldArticle = await this.articleRep.findOne(artDto.id);
+
+    //if article not exist
+    if (!oldArticle) {
+      return {
+        message: 'article id not exist',
+        source: 'editArticle',
+        ok: false,
+      };
+    }
+
+    // if wrong user
+    if (oldArticle.author.id !== userIdFromToken) {
+      return {
+        message: 'wrong user',
+        source: 'editArticle',
+        ok: false,
+      };
+    }
+
+    // rewrite article
+    oldArticle.text = artDto.text;
+    oldArticle.title = artDto.title;
+    oldArticle.description = artDto.description;
+    try {
+      await this.articleRep.save(oldArticle);
+      return {
+        message: oldArticle.title,
+        source: 'editArticle',
+        ok: true,
+      };
+    } catch (err) {
+      return { message: err.message, source: 'editArticle', ok: false };
+    }
+  }
+
+  async changeActiveStatusOfArticle(
+    ArticleId: string,
+    userIdFromToken: string,
+    roleOfUserFromToken: string,
+  ): Promise<StatusMessageDto> {
+    const oldArticle = await this.articleRep.findOne(ArticleId);
+
+    //if article not exist
+    if (!oldArticle) {
+      return {
+        message: 'article id not exist',
+        source: 'editArticle',
+        ok: false,
+      };
+    }
+
+    // if wrong user
+    if (
+      oldArticle.author.id !== userIdFromToken &&
+      roleOfUserFromToken !== 'admin'
+    ) {
+      return {
+        message: 'wrong user',
+        source: 'editArticle',
+        ok: false,
+      };
+    }
+
+    // rewrite article
+    oldArticle.isActive = !oldArticle.isActive;
+    try {
+      await this.articleRep.save(oldArticle);
+      return {
+        message: oldArticle.title,
+        source: 'changeActiveStatusOfArticle',
+        ok: true,
+      };
+    } catch (err) {
+      return {
+        message: err.message,
+        source: 'changeActiveStatusOfArticle',
+        ok: false,
+      };
+    }
+  }
 }

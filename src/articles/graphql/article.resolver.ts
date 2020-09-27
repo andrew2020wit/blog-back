@@ -35,8 +35,24 @@ export class GetCreateArticleArgs {
   description: string;
   @Field()
   text: string;
+}
+
+@ArgsType()
+export class GetEditArticleArgs {
   @Field()
-  userId: string;
+  articleId: string;
+  @Field()
+  title: string;
+  @Field()
+  description: string;
+  @Field()
+  text: string;
+}
+
+@ArgsType()
+export class GetChangeActiveStatusOfArticleArgs {
+  @Field()
+  articleId: string;
 }
 
 @Resolver(() => [ArticleEntity])
@@ -77,5 +93,37 @@ export class ArticlesResolver {
       user.sub,
     );
     return 'createArticle: Ok';
+  }
+
+  @Mutation(returns => String)
+  @UseGuards(GqlAuthGuard)
+  async editArticle(
+    @Args() args: GetEditArticleArgs,
+    @CurrentUser() user: JwtPayloadExtDto,
+  ): Promise<string> {
+    const ret = await this.articlesService.editArticle(
+      {
+        title: args.title,
+        text: args.text,
+        description: args.description,
+        id: args.articleId,
+      },
+      user.sub,
+    );
+    return ret.source + ': ' + ret.message;
+  }
+
+  @Mutation(returns => String)
+  @UseGuards(GqlAuthGuard)
+  async changeActiveStatusOfArticle(
+    @Args() args: GetChangeActiveStatusOfArticleArgs,
+    @CurrentUser() user: JwtPayloadExtDto,
+  ): Promise<string> {
+    this.articlesService.changeActiveStatusOfArticle(
+      args.articleId,
+      user.sub,
+      user.role,
+    );
+    return 'changeActiveStatusOfArticle: Ok';
   }
 }
