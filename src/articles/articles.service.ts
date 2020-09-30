@@ -91,7 +91,7 @@ export class ArticlesService {
     }
   }
 
-  async changeActiveStatusOfArticle(
+  async disActiveArticle(
     ArticleId: string,
     userIdFromToken: string,
     roleOfUserFromToken: string,
@@ -102,7 +102,7 @@ export class ArticlesService {
     if (!oldArticle) {
       return {
         message: 'article id not exist',
-        source: 'editArticle',
+        source: 'disActiveArticle',
         ok: false,
       };
     }
@@ -114,24 +114,24 @@ export class ArticlesService {
     ) {
       return {
         message: 'wrong user',
-        source: 'editArticle',
+        source: 'disActiveArticle',
         ok: false,
       };
     }
 
     // rewrite article
-    oldArticle.isActive = !oldArticle.isActive;
+    oldArticle.isActive = false;
     try {
       await this.articleRep.save(oldArticle);
       return {
         message: oldArticle.title,
-        source: 'changeActiveStatusOfArticle',
+        source: 'disActiveArticle',
         ok: true,
       };
     } catch (err) {
       return {
         message: err.message,
-        source: 'changeActiveStatusOfArticle',
+        source: 'disActiveArticle',
         ok: false,
       };
     }

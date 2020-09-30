@@ -71,6 +71,7 @@ export class ArticlesResolver {
       where: {
         createdOn: LessThan(args.createOnCursor),
         title: Like(`%${args.sample}%`),
+        isActive: true,
       },
     });
   }
@@ -115,15 +116,11 @@ export class ArticlesResolver {
 
   @Mutation(returns => String)
   @UseGuards(GqlAuthGuard)
-  async changeActiveStatusOfArticle(
+  async disActiveArticle(
     @Args() args: GetChangeActiveStatusOfArticleArgs,
     @CurrentUser() user: JwtPayloadExtDto,
   ): Promise<string> {
-    this.articlesService.changeActiveStatusOfArticle(
-      args.articleId,
-      user.sub,
-      user.role,
-    );
-    return 'changeActiveStatusOfArticle: Ok';
+    this.articlesService.disActiveArticle(args.articleId, user.sub, user.role);
+    return 'disActiveArticle: Ok';
   }
 }
